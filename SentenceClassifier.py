@@ -73,7 +73,7 @@ class SentenceClassifier():
         prediction = self.__eval_net(message)
         proba = np.max(prediction)
         result = self.__class_names[self.__new2old[np.argmax(prediction)]-1]
-        print('Класс: \n{}\nВероятность: \n{:1.3f}'.format(result, proba))
+        #print('Класс: \n{}\nВероятность: \n{:1.3f}'.format(result, proba))
         return {
                 'decision': result,
                 'confidence': proba
