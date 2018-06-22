@@ -1,1 +1,1 @@
-{"word_embeddings": "pickles/ft_compressed.pkl", "class_names": "pickles/class_names.pkl", "old2new": "pickles/old2new.pkl", "new2old": "pickles/new2old.pkl", "num2title": "pickles/num2title.pkl", "weights": "cnn.hdf5"}
+{"word_embeddings": "pickles/ft_compressed.pkl", "class_names": "pickles/class_names.pkl", "old2new": "pickles/old2new.pkl", "new2old": "pickles/new2old.pkl", "num2title": "pickles/num2title.pkl", "weights": "weights/cnn.hdf5"}
