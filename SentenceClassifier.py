@@ -11,18 +11,21 @@ from keras.layers import Flatten
 from keras.layers import BatchNormalization
 from keras.layers import Bidirectional
 from nltk.tokenize import TreebankWordTokenizer
-
+import json
 
 class SentenceClassifier():
-    def __init__(self):
+    def __init__(self, config_file):
+        self.config= json.load(open(config_file,'r'))
+        
         self.__tokenizer = TreebankWordTokenizer()
         #self.stemmer = SnowballStemmer('russian')
+        
         self.__mystem = pymystem3.Mystem()
-        self.__ft_c = pickle.load(open('pickles/ft_compressed.pkl', 'rb'))
-        self.__class_names = pickle.load(open('pickles/class_names.pkl','rb'))
-        self.__old2new = pickle.load(open('pickles/old2new.pkl','rb'))
-        self.__new2old = pickle.load(open('pickles/new2old.pkl','rb'))
-        self.__num2title = pickle.load(open('pickles/num2title.pkl','rb'))
+        self.__ft_c = pickle.load(open(self.config['word_embeddings'], 'rb'))
+        self.__class_names = pickle.load(open(self.config['class_names'],'rb'))
+        self.__old2new = pickle.load(open(self.config['old2new'],'rb'))
+        self.__new2old = pickle.load(open(self.config['new2old'],'rb'))
+        self.__num2title = pickle.load(open(self.config['num2title'],'rb'))
         self.__build_net(mtype = 'cnn')
 
     
@@ -53,7 +56,7 @@ class SentenceClassifier():
             model.add(Dense(19, activation='softmax'))
             self.__net = model
             self.__net.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['categorical_accuracy'])
-            self.__net.load_weights('weights/cnn.hdf5')
+            self.__net.load_weights(self.config['weights'])
         elif mtype == 'lstm':
             model = Sequential()
             model.add(Bidirectional(LSTM(25, activation='relu'), input_shape = (None, 25)))
@@ -61,7 +64,7 @@ class SentenceClassifier():
             model.add(Dense(19, activation='softmax'))
             self.__net = model
             self.__net.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['categorical_accuracy'])
-            self.__net.load_weights
+            #self.__net.load_weights()
 
     def __eval_net(self, message):
         message = self.__clean_message(message)
@@ -69,7 +72,7 @@ class SentenceClassifier():
         prediction = self.__net.predict(vecs)
         return prediction#np.argmax(prediction)
 
-    def predict(self, message):
+    def run(self, message):
         prediction = self.__eval_net(message)
         proba = np.max(prediction)
         result = self.__class_names[self.__new2old[np.argmax(prediction)]-1]
